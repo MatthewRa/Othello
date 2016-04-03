@@ -1,3 +1,19 @@
+(defstruct node
+	state ; 8x8 representation of board
+	player ; current player
+	black ; number of black pieces on board
+	white ; number of white pieces on board
+	score ; score assigned by evaluation of state or pieces
+)
+
+; Switches opponent ID based on player ID
+(defun opponent (player)
+	(let((opponent 'W))
+		(cond ((eq player 'W) (setf opponent 'B)))
+	opponent
+	)
+)
+
 ; initialize board for othello
 (defun createBoard ()
 	(let ((board (make-list 64 :initial-element '-)))
@@ -8,6 +24,17 @@
 		board
 	)
 )
+
+; Each place can result in mul
+(defun gen_moves (game_node depth)
+	(cond 
+		((eq depth 0)
+			(scoreboard game_node)
+)
+
+(defun make-move ())
+
+(defun evaluation ())
 
 ; print board state
 (defun printBoard (board)
@@ -22,9 +49,6 @@
 		)
 	)
 )
-
-; generate successors for piece on board 
-(defun gen_moves (pos board))
 
 
 (defun test_move (plyr pos board)
@@ -49,28 +73,27 @@
 	newboard
 )
 
-; Still working on this one
-(defun flip_pieces (board player position y_vec x_vec)
-	(do*
+
+(defun flip_pieces (board pos x_vec y_vec player)
+	(let*
 		(
-			(alterboard board)
-			((nth position alterboard) player)
-			(pos (+ (* y_vec 8) x_vec position))
-			(princ pos)
-			(oplyr 'W)
-			;(cond ((eq player 'W) (setf oplyr 'B)))
+			(opp (opponent player))
+			(x_pos (mod pos 8))
+			(col_bound (and (< (+ x_pos x_vec) 8)
+				(> (+ x_pos x_vec) -1)))
+			(row_bound (and (< pos 64) (> pos -1)))
+			(next_pos (+ pos x_vec (* y_vec 8)))
 		)
-		((eq (nth pos board) player) (return alterboard))
-		
-		(setf (nth pos alterboard) player)
+		(cond((and col_bound row_bound)
+			(cond 
+				((eq (nth next_pos board) opp)
+					(flip_pieces board next_pos x_vec y_vec player))
+			)
+			(cond
+				((eq (nth next_pos board) player)
+					(setf (nth pos board) player))
+			)
+		)) 
 
-		(cond ((or (< (+ pos (* y_vec 8)) 0) (> (+ pos (* y_vec 8)) 64) 
-			(< (+ (mod pos 8) x_vec) 0) (> (+ (mod pos 8) x_vec) 7))
-			(return board))
-
-			(t (setf pos (+ (* y_vec 8) x_vec pos)))
-		)
-
-		(cond ((eq (nth pos board) '-) (return board)))
-	) 
+	)
 )
