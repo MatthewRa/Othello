@@ -30,6 +30,8 @@
 	(cond 
 		((eq depth 0)
 			(scoreboard game_node)
+		)
+	)
 )
 
 (defun make-move ())
