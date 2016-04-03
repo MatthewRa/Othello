@@ -3,9 +3,57 @@
 
 
 
-Author: Steve Huerta Matthew Rames
+Author: Steve Huerta, Matthew Rames
 Written Spring 2016 for CSC447/547 AI class.
 
 |#
 
 ;--------------------------------------------------------------------------
+
+(load 'someFunctions)
+
+;Starting point of othello program
+(defun othello ( &optional args )
+	(cond
+		((= (length args) 1)
+			(setf playerColor (car args))
+		)
+		
+		((= (length args) 0)
+			; Propmpt player if they would like to go first or second
+			(format t "Would you like to move first [y/n]? ")
+			
+			(setf response (read))
+			
+			(when (equalp response 'y)
+				(setf playerColor "Black")
+				
+			)
+			
+			(when (equalp response 'n)
+				(setf playerColor "White")
+			)
+		)
+	)
+	
+	(format t "Player Color: ~A~%" playerColor)
+	
+	(when (equalp playerColor "Black")
+		(format t "~%OK! You will be playing Black. When asked for your move, please enter ") 
+		(format t "the row and column in which you would like to place a Black stone. Remember, ")
+		(format t "you must outflank atleast one White stone, or forfeit your move. ~%~%")
+	)
+	
+	(when (equalp playerColor "White")
+			(format t "~%OK! You will be playing White. When asked for your move, please enter ")
+			(format t "the row and column in which you would like to place a White stone. Remember, ")
+			(format t "you must outflank atleast one Black stone, or forfeit your move. ~%")
+	)
+	
+	;Begin Othello
+	(printBoard (createBoard))
+)
+
+(when (= (length *ARGS*) 1)
+	(othello *ARGS*)
+)
