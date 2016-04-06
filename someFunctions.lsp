@@ -127,7 +127,7 @@
 							(- col 1) (- row 1) plyr ))
 						(cond
 							((not (eq newboard NIL)) (setf board newbaord))
-						)
+					)	)
 				)
 			)
 		)
