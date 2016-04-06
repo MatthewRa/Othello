@@ -10,7 +10,7 @@
 (defun opponent (player)
 	(let((opponent 'W))
 		(cond ((eq player 'W) (setf opponent 'B)))
-	opponent
+		opponent
 	)
 )
 
@@ -75,6 +75,36 @@
 	newboard
 )
 
+(defun test_move (board pos plyr)
+	(let
+		(
+			(newboard board)
+			(opp (opponent plyr))
+			(pos_row (floor (/ pos 8)))
+			(pos_col (mod pos 8))
+		)
+		(dotimes (row 3)
+			(dotimes (col 3)
+				(setf new_row (+ pos_row (- row 1)))
+				(setf new_col (+ pos_col (- col 1)))
+				(cond ((and (< new_row 8) (> new_row -1)
+						(< new_col 8) (> new_col -1))
+						(setf new_pos (+ new_col (* new_row 8))))
+					(t setf new_pos -1)
+				)
+				(cond
+					((and (> new_pos -1) (eq (nth new_pos board) opp))
+						(setf newboard (flip_pieces board new_pos 
+							(- col 1) (- row 1) plyr ))
+						(cond
+							((not (eq newboard NIL)) (setf board newbaord))
+						)
+				)
+			)
+		)
+	)
+)
+
 
 (defun flip_pieces (board pos x_vec y_vec player)
 	(let*
@@ -95,7 +125,8 @@
 				((eq (nth next_pos board) player)
 					(setf (nth pos board) player))
 			)
-		)) 
+		))
+		board 
 
 	)
 )
