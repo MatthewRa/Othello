@@ -6,6 +6,35 @@
 	score ; score assigned by evaluation of state or pieces
 )
 
+(defun StartGame(playerColor)
+
+	(setf board (createBoard))
+	(printBoard board)
+	
+	(cond
+		((equalp playerColor 'B)
+			; Player Makes Move
+			(format t "~%What is your move [row col]? ")
+	
+			(setf move (list (read) (read)))
+			
+			(format t "Your move: ~A" move)
+			
+			; Computer Makes Move
+		)
+		
+		((equalp playerColor 'W)
+			; Computer Makes Move
+			
+			; Player Makes Move
+			(format t "~%What is your move [row col]? ")
+	
+			(setf move (list (read) (read)))
+		)
+	)
+	
+)
+
 ; Switches opponent ID based on player ID
 (defun opponent (player)
 	(let((opponent 'W))

@@ -12,6 +12,22 @@ Written Spring 2016 for CSC447/547 AI class.
 
 (load 'someFunctions)
 
+(defun playAgain ()
+	; Prompt user if the would like to play again
+	(format t "~%~%Would you like to play again? [y/n]? ")
+	
+	(setf again (read))
+	
+	(when (equalp again 'y)
+		(othello)
+	)
+	
+	(when (equalp again 'n)
+		(format t "Thanks for playing!~%")
+		(exit)
+	)
+)
+
 ;Starting point of othello program
 (defun othello ( &optional args )
 	(cond
@@ -36,22 +52,26 @@ Written Spring 2016 for CSC447/547 AI class.
 		)
 	)
 	
-	(format t "Player Color: ~A~%" playerColor)
+	;(format t "Player Color: ~A~%" playerColor)
 	
 	(when (equalp playerColor "Black")
 		(format t "~%OK! You will be playing Black. When asked for your move, please enter ") 
 		(format t "the row and column in which you would like to place a Black stone. Remember, ")
 		(format t "you must outflank atleast one White stone, or forfeit your move. ~%~%")
+		(setf playerColor 'B)
 	)
 	
 	(when (equalp playerColor "White")
 			(format t "~%OK! You will be playing White. When asked for your move, please enter ")
 			(format t "the row and column in which you would like to place a White stone. Remember, ")
-			(format t "you must outflank atleast one Black stone, or forfeit your move. ~%")
+			(format t "you must outflank atleast one Black stone, or forfeit your move. ~%~%")
+			(setf playerColor 'W)
 	)
 	
 	;Begin Othello
-	(printBoard (createBoard))
+	(StartGame playerColor)
+	
+	(playAgain)
 )
 
 (when (= (length *ARGS*) 1)
