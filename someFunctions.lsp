@@ -82,54 +82,48 @@
 )
 
 
-(defun test_move (plyr pos board)
-	(let
-		(newboard board)
-		(checkpos)
-		(oplyr 'W)
-	)
-	(cond ((eq plyr 'W) (setf oplyr 'B)))
-	(dotimes (row 3)
-		(dotimes (col 3)
-			(setf checkpos (+ (+ (- col 1) pos) (* (- row 1) pos)))
-			(cond
-				((and (and (< checkpos 64) (> checkpos -1))
-					(and (> (+ (mod pos 8) (- col 1)) 0) (< (+ (mod pos 8) (- col 1)) 8))
-					(and (eq (nth checkpos board) oplyr)))
-					(setf newboard (flip_pieces newboard plyr checkpos (- row 1) (- col 1)))
-				)
-			)
-		)		
-	)
-	newboard
-)
-
 (defun test_move (board pos plyr)
+"
+Usage: (test_move board pos plyr)
+
+board - 8x8 board represented by a 64 element list
+pos - a list consisting of two elements: (row column)
+plyr - 'B or 'W representing the current player 
+
+"
 	(let
 		(
 			(newboard board)
 			(opp (opponent plyr))
-			(pos_row (floor (/ pos 8)))
-			(pos_col (mod pos 8))
+			(pos_row (- (car pos) 1)) ; alt -> (floor (/ pos 8))
+			(pos_col (- (cadr pos) 1)) ; alt -> (mod pos 8)
+			(position (+ (- (cadr pos) 1) (* (- (car pos) 1) 8)) )
 		)
-		(dotimes (row 3)
-			(dotimes (col 3)
-				(setf new_row (+ pos_row (- row 1)))
-				(setf new_col (+ pos_col (- col 1)))
-				(cond ((and (< new_row 8) (> new_row -1)
-						(< new_col 8) (> new_col -1))
-						(setf new_pos (+ new_col (* new_row 8))))
-					(t setf new_pos -1)
+		(cond ((eq (nth position board) '-)
+			(dotimes (row 3)
+				(dotimes (col 3)
+					(setf new_row (+ pos_row (- row 1)))
+					(setf new_col (+ pos_col (- col 1)))
+					;(format t "ROW: ~d  COL: ~d~%" new_row new_col)
+					(cond ((and (< new_row 8) (> new_row -1)
+							(< new_col 8) (> new_col -1))
+							(setf new_pos (+ new_col (* new_row 8))))
+						(t (setf new_pos -1))
+					)
+					;(format t "NEW POSITION: ~d~%" new_pos)
+					(cond ((and (> new_pos -1) (eq (nth new_pos board) opp))
+						;(format t "FOUND AT: ~d~%" new_pos)
+						(flip_pieces board position	(- col 1) (- row 1) plyr)
+						)
+					)
 				)
-				(cond
-					((and (> new_pos -1) (eq (nth new_pos board) opp))
-						(setf newboard (flip_pieces board new_pos 
-							(- col 1) (- row 1) plyr ))
-						(cond
-							((not (eq newboard NIL)) (setf board newbaord))
-					)	)
-				)
-			)
+			))
+			(t (setf position nil))
+		)
+		(cond ((and (not (eq position nil)) (eq (nth position board) plyr)) 
+			board)
+
+			(t nil)
 		)
 	)
 )
@@ -155,7 +149,5 @@
 					(setf (nth pos board) player))
 			)
 		))
-		board 
-
 	)
 )
