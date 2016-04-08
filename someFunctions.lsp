@@ -54,6 +54,7 @@
 	)
 )
 
+; Just to get some formatted board states
 (defun test_gen_succ (board player)
 	(let ((states (gen_successors board player)))
 		(dotimes (i (list-length states))
@@ -62,7 +63,9 @@
 	) 
 )
 
-; Each place can result in mul
+; Generate successive states from current state for a player
+; Returns NIL if no moves are available
+; Returns a list of lists (board states)
 (defun gen_successors (board player)
 	(let
 		(
