@@ -54,11 +54,43 @@
 	)
 )
 
+(defun test_gen_succ (board player)
+	(let ((states (gen_successors board player)))
+		(dotimes (i (list-length states))
+			(printBoard (nth i states))
+		)
+	) 
+)
+
 ; Each place can result in mul
-(defun gen_moves (game_node depth)
-	(cond 
-		((eq depth 0)
-			(scoreboard game_node)
+(defun gen_successors (board player)
+	(let
+		(
+			(successors '())
+
+
+		)
+		(dotimes (i 64)
+			(let
+				(
+					(row (+ (floor (/ i 8)) 1))
+					(col (+ (mod i 8) 1))
+				)
+				(cond
+					((eq (nth i board) '-)
+						(setf temp (test_move (copy-list board) (list row col) player))
+						(cond((not (eq temp nil))
+							(printBoard temp)
+							(setf successors (cons temp successors)))
+						)
+					) 
+				)
+			)
+		)
+		(cond((not(eq successors nil))
+			successors)
+
+			(t nil)
 		)
 	)
 )
