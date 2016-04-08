@@ -70,8 +70,6 @@
 	(let
 		(
 			(successors '())
-
-
 		)
 		(dotimes (i 64)
 			(let
@@ -83,7 +81,6 @@
 					((eq (nth i board) '-)
 						(setf temp (test_move (copy-list board) (list row col) player))
 						(cond((not (eq temp nil))
-							(printBoard temp)
 							(setf successors (cons temp successors)))
 						)
 					) 
@@ -184,5 +181,50 @@ plyr - 'B or 'W representing the current player
 					(setf (nth pos board) player))
 			)
 		))
+	)
+)
+
+
+; Board is going to be a node - see node definition
+(defun get_max(board player depth)
+	(cond ((eq depth 0)(make-node)(format t "I'm at the MAX and depth 0~%")(printBoard board))
+		(t 
+			(let*
+				(
+					(maxval -10000000) ; negative infinity
+					(moves (gen_successors board player))
+					(num_moves 
+						(cond((eq moves nil) 0)
+							(t (list-length moves))
+						)
+					)
+				) 
+				(dotimes (i num_moves)
+					(get_min (nth i moves) (opponent player) (- depth 1))
+				)
+			)
+		)
+	)
+)
+
+; Board is going to be a node - see node definition
+(defun get_min(board player depth)
+	(cond ((eq depth 0)(make-node)(format t "I'm at the MIN and depth 0~%")(printBoard board))
+		(t 
+			(let*
+				(
+					(minval 10000000) ; positive infinity
+					(moves (gen_successors board player))
+					(num_moves 
+						(cond((eq moves nil) 0)
+							(t (list-length moves))
+						)
+					)
+				) 
+				(dotimes (i num_moves)
+					(get_max (nth i moves) (opponent player) (- depth 1))
+				)
+			)
+		)
 	)
 )
