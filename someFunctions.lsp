@@ -13,23 +13,57 @@
 	
 	(cond
 		((equalp playerColor 'B)
-			; Player Makes Move
-			(format t "~%What is your move [row col]? ")
-	
-			(setf move (list (read) (read)))
-			
-			(format t "Your move: ~A" move)
-			
-			; Computer Makes Move
+			(loop 
+				; Termination test
+				(when(null (member '- board)) break)
+				
+				; Player Makes Move
+				(format t "~%What is your move player B [row col]? ")
+		
+				(setf move (list (read) (read)))
+				
+				(format t "~%Your move: ~A~%" move)
+				(player_move board move 'B)
+				
+				(printBoard board)
+				
+				; Computer Makes Move
+				(format t "~%What is your move plsyer W [row col]? ")
+				
+				(setf move (list (read) (read)))
+				
+				(format t "~%Your move: ~A~%" move)
+				(player_move board move 'W)
+				
+				(printBoard board)
+			)
 		)
 		
 		((equalp playerColor 'W)
-			; Computer Makes Move
-			
-			; Player Makes Move
-			(format t "~%What is your move [row col]? ")
-	
-			(setf move (list (read) (read)))
+			(loop 
+				; Termination test
+				(when(null (member '- board)) break)
+				
+				; Computer Makes Move
+				(format t "~%What is your move [row col]? ")
+		
+				(setf move (list (read) (read)))
+				
+				(format t "~%Your move: ~A~%" move)
+				(player_move board move 'B)
+				
+				(printBoard board)
+				
+				; Player Makes Move
+				(format t "~%What is your move [row col]? ")
+		
+				(setf move (list (read) (read)))
+				
+				(format t "~%Your move: ~A~%" move)
+				(player_move board move 'B)
+				
+				(printBoard board)
+			)
 		)
 	)
 	
@@ -121,9 +155,9 @@
 )
 
 
-(defun test_move (board pos plyr)
+(defun player_move (board pos plyr)
 "
-Usage: (test_move board pos plyr)
+Usage: (player_move board pos plyr)
 
 board - 8x8 board represented by a 64 element list
 pos - a list consisting of two elements: (row column)
