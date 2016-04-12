@@ -15,25 +15,46 @@
 		((equalp playerColor 'B)
 			(loop 
 				; Termination test
-				(when(null (member '- board)) break)
+				(when(null (member '- board)) return)
 				
 				; Player Makes Move
-				(format t "~%What is your move player B [row col]? ")
+				;Check if player B can make a move
+				(cond 
+					; Player has no moves
+					((null (gen_successors board playerColor))
+						(format t "~%Player B has no moves... ")
+					)
+					; Player can make a move
+					((not (null (gen_successors board playerColor)))
+						(format t "~%What is your move player B [row col]? ")
 		
-				(setf move (list (read) (read)))
-				
-				(format t "~%Your move: ~A~%" move)
-				(player_move board move 'B)
+						(setf move (list (read) (read)))
+						
+						(format t "~%Your move: ~A~%" move)
+						(player_move board move 'B)
+					)
+				)
+
 				
 				(printBoard board)
 				
 				; Computer Makes Move
-				(format t "~%What is your move plsyer W [row col]? ")
-				
-				(setf move (list (read) (read)))
-				
-				(format t "~%Your move: ~A~%" move)
-				(player_move board move 'W)
+				; Check if player W can make a move
+				(cond 
+					; Player has no moves
+					((null (gen_successors board playerColor))
+						(format t "~%Player W has no moves... ")
+					)
+					; Player can make a move
+					((not (null (gen_successors board playerColor)))
+						(format t "~%What is your move player W [row col]? ")
+						
+						(setf move (list (read) (read)))
+						
+						(format t "~%Your move: ~A~%" move)
+						(player_move board move 'W)
+					)
+				)
 				
 				(printBoard board)
 			)
@@ -42,25 +63,45 @@
 		((equalp playerColor 'W)
 			(loop 
 				; Termination test
-				(when(null (member '- board)) break)
+				(when(null (member '- board)) return)
 				
 				; Computer Makes Move
-				(format t "~%What is your move [row col]? ")
+				;Check if player B can make a move
+				(cond 
+					; Player has no moves
+					((null (gen_successors board playerColor))
+						(format t "~%Player B has no moves... ")
+					)
+					; Player can make a move
+					((not (null (gen_successors board playerColor)))
+						(format t "~%What is your move player B [row col]? ")
 		
-				(setf move (list (read) (read)))
-				
-				(format t "~%Your move: ~A~%" move)
-				(player_move board move 'B)
+						(setf move (list (read) (read)))
+						
+						(format t "~%Your move: ~A~%" move)
+						(player_move board move 'B)
+					)
+				)
 				
 				(printBoard board)
 				
 				; Player Makes Move
-				(format t "~%What is your move [row col]? ")
-		
-				(setf move (list (read) (read)))
-				
-				(format t "~%Your move: ~A~%" move)
-				(player_move board move 'B)
+				; Check if player W can make a move
+				(cond 
+					; Player has no moves
+					((null (gen_successors board playerColor))
+						(format t "~%Player W has no moves... ")
+					)
+					; Player can make a move
+					((not (null (gen_successors board playerColor)))
+						(format t "~%What is your move player W [row col]? ")
+						
+						(setf move (list (read) (read)))
+						
+						(format t "~%Your move: ~A~%" move)
+						(player_move board move 'W)
+					)
+				)
 				
 				(printBoard board)
 			)
@@ -120,7 +161,7 @@
 				)
 				(cond
 					((eq (nth i board) '-)
-						(setf temp (test_move (copy-list board) (list row col) player))
+						(setf temp (player_move (copy-list board) (list row col) player))
 						(cond((not (eq temp nil))
 							(setf successors (cons temp successors)))
 						)
