@@ -161,6 +161,7 @@
 				)
 				(cond
 					((eq (nth i board) '-)
+						;(format t "TESTING ROW: ~d COL: ~d~%" row col )
 						(setf temp (player_move (copy-list board) (list row col) player))
 						(cond((not (eq temp nil))
 							(setf successors (cons temp successors)))
@@ -220,7 +221,8 @@ plyr - 'B or 'W representing the current player
 					(setf new_col (+ pos_col (- col 1)))
 					;(format t "ROW: ~d  COL: ~d~%" new_row new_col)
 					(cond ((and (< new_row 8) (> new_row -1)
-							(< new_col 8) (> new_col -1))
+							(< new_col 8) (> new_col -1) 
+							(not (and (eq new_row 0) (eq new_col 0))))
 							(setf new_pos (+ new_col (* new_row 8))))
 						(t (setf new_pos -1))
 					)
@@ -252,8 +254,9 @@ plyr - 'B or 'W representing the current player
 				(> (+ x_pos x_vec) -1)))
 			(row_bound (and (< pos 64) (> pos -1)))
 			(next_pos (+ pos x_vec (* y_vec 8)))
+			(next_bound (and (< next_pos 64) (> next_pos -1)))
 		)
-		(cond((and col_bound row_bound)
+		(cond((and col_bound row_bound next_bound)
 			(cond 
 				((eq (nth next_pos board) opp)
 					(flip_pieces board next_pos x_vec y_vec player))
@@ -378,3 +381,13 @@ plyr - 'B or 'W representing the current player
 		(list black white)
 	)
 )
+
+
+(setf testboard '(B W - B - - B - 
+   				  - B - B - - B -
+				  W W B B B B B B
+				  W W W B B B W B
+				  W W B W B B W B 
+				  W B W B B B W W 
+				  W W B B B - - - 
+				  W W W W W - - - ))
