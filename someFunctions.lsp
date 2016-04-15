@@ -142,7 +142,7 @@
 ; more troubleshooting to come
 ; still need to adjust to pass only the next move rather than best game state at nth depth
 (defun test_minimax (board player depth)
-	(printboard (node-state (get_max board player (- depth 1))))
+	(setf result (get_max board player (- depth 1)))
 )
 
 ; Generate successive states from current state for a player
@@ -271,15 +271,49 @@ plyr - 'B or 'W representing the current player
 
 
 ; Board is going to be a node - see node definition
+(defun minimax_ab(board player depth 
+	&optional (min 100000000) (max -1000000000) ())
+	(cond
+		((eq depth 0)
+			(setf score (scoring_count board))
+			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
+			(list node)
+		)
+		(t (let* 
+			(
+				(moves (gen_successors board player))
+				(num_moves (cond 
+					((eq moves nil) 0)
+					(t (list-length moves)))
+				(opp (opponent player))
+			)
+
+
+
+
+		))
+
+
+
+
+
+
+
+	)
+)
+
+
+
+
 (defun get_max(board player depth)
 	(cond 
 		((eq depth 0)
 			(setf score (scoring_count board))
-			(setf success (make-node :state board :player player :black (car score) :white (cadr score)))
-			; (format t "I'm at the MAX BLACK: ~vd WHITE: ~vd~%" 2 (node-black success) 2 (node-white success))
+			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
+			; (format t "I'm at the MAX BLACK: ~vd WHITE: ~vd~%" 2 (node-black node) 2 (node-white node))
 			; (format t "I'm at the MAX and depth 0~%")
 			; (printBoard board)
-			success
+			(list node)
 		)
 		(t 
 			(let*
@@ -294,23 +328,23 @@ plyr - 'B or 'W representing the current player
 					)
 				) 
 				(dotimes (i num_moves)
-					(format t "DEPTH:~vd MAXVALUE: ~vd HIGHEST: ~vd~%" 2 depth 2 maxval 2 highest)
-					(cond ((< maxval highest)
-					(setf success (get_min (nth i moves) (opponent player) (- depth 1)))
-					(setf highest (- (+ (node-white success) (node-black success)) 1))
+					;(format t "DEPTH:~vd MAXVALUE: ~vd HIGHEST: ~vd~%" 2 depth 2 maxval 2 highest)
+					;(cond (and T T) ;(< maxval highest)
+					(setf node (car (get_min (nth i moves) (opponent player) (- depth 1))))
+					(setf highest (- (+ (node-white node) (node-black node)) 1))
 					(cond 
 						((eq player 'B)
-							(cond ((< maxval (node-black success))
-								(setf maxval (node-black success))
-								(setf bestnode success))
-							))
+							(cond ((< maxval (node-black node))
+								(setf maxval (node-black node))
+								(setf bestnode (list node (nth i moves) depth))
+							)))
 						((eq player 'W)
-							(cond ((< maxval (node-white success))
-								(setf maxval (node-white success))
-								(setf bestnode success))
-							))
+							(cond ((< maxval (node-white node))
+								(setf maxval (node-white node))
+								(setf bestnode (list node (nth i moves) depth))
+							)))
 						
-					)))
+					)
 				)
 				bestnode
 			)
@@ -324,10 +358,10 @@ plyr - 'B or 'W representing the current player
 	(cond 
 		((eq depth 0)
 			(setf score (scoring_count board))
-			(setf success (make-node :state board :player player :black (car score) :white (cadr score)))
-			; (format t "I'm at the MIN BLACK: ~vd WHITE: ~vd~%" 2 (node-black success) 2 (node-white success))
+			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
+			; (format t "I'm at the MIN BLACK: ~vd WHITE: ~vd~%" 2 (node-black node) 2 (node-white node))
 			; (printBoard board)
-			success
+			(list node)
 		)
 		(t 
 			(let*
@@ -342,22 +376,22 @@ plyr - 'B or 'W representing the current player
 					)
 				) 
 				(dotimes (i num_moves)
-					(format t "DEPTH:~vd MINVALUE: ~vd LOWEST: ~vd~%" 2 depth 2 minval 2 lowest)
-					(cond ((> minval lowest)	
-					(setf success (get_max (nth i moves) (opponent player) (- depth 1)))
+					;(format t "DEPTH:~vd MINVALUE: ~vd LOWEST: ~vd~%" 2 depth 2 minval 2 lowest)
+					;(cond (and T T)	; > minval lowest
+					(setf node (car (get_min (nth i moves) (opponent player) (- depth 1))))
 					(cond 
 						((eq player 'B)
-							(cond ((> minval (node-white success))
-								(setf minval (node-white success))
-								(setf bestnode success))
-							))
+							(cond ((> minval (node-black node))
+								(setf minval (node-black node))							
+								(setf bestnode (list node (nth i moves) depth))
+							)))
 						((eq player 'W)
-							(cond ((> minval (node-black success))
-								(setf minval (node-black success))
-								(setf bestnode success))
-							))
+							(cond ((> minval (node-white node))
+								(setf minval (node-white node))
+								(setf bestnode (list node (nth i moves) depth))
+							)))
 						
-					)))
+					)
 				)
 				bestnode
 			)
