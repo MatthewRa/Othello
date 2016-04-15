@@ -166,6 +166,13 @@
 	)
 )
 
+(defun o_type (type)
+	(let ((other_type 'min))
+		(cond ((eq type 'min) (setf other_type 'max)))
+		other_type
+	)
+)
+
 ; initialize board for othello
 (defun createBoard ()
 	(let ((board (make-list 64 :initial-element '-)))
@@ -227,8 +234,6 @@
 )
 
 (defun make-move ())
-
-(defun evaluation ())
 
 ; print board state
 (defun printBoard (board)
@@ -320,9 +325,9 @@ plyr - 'B or 'W representing the current player
 
 ; Board is going to be a node - see node definition
 (defun minimax_ab(board player depth 
-	&optional (min 100000000) (max -1000000000) ())
+	&optional (min 100000000) (max -1000000000) type)
 	(cond
-		((eq depth 0)
+		((eq depth 1)
 			(setf score (scoring_count board))
 			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
 			(list node)
@@ -332,21 +337,32 @@ plyr - 'B or 'W representing the current player
 				(moves (gen_successors board player))
 				(num_moves (cond 
 					((eq moves nil) 0)
-					(t (list-length moves)))
+					(t (list-length moves))))
 				(opp (opponent player))
 			)
-
-
-
-
+			(dotimes (i num_moves)
+				(setf trace (minimax_ab (nth i moves) opp (- depth 1) min max (o_type type)))
+				(setf node (car trace))
+				(cond ((not (eq node nil))
+				(cond 
+					((eq player 'B)
+						(setf temp_score (node-black node)))
+					(t (setf temp_score (node-white node)))
+				)
+				(cond 
+					((> min temp_score)
+						(setf min temp_score)
+						(setf bestnode (list node board))
+					)
+					((< max temp_score)
+						(setf max temp_score)
+						(setf bestnode (list node board))
+					)
+				)))
+			)
+			bestnode
+			;(format t "NODE SCORE - BLACK: ~d  WHITE: ~d DEPTH: ~d~%" (node-black node) (node-white node) depth)
 		))
-
-
-
-
-
-
-
 	)
 )
 
@@ -426,7 +442,7 @@ plyr - 'B or 'W representing the current player
 				(dotimes (i num_moves)
 					;(format t "DEPTH:~vd MINVALUE: ~vd LOWEST: ~vd~%" 2 depth 2 minval 2 lowest)
 					;(cond (and T T)	; > minval lowest
-					(setf node (car (get_min (nth i moves) (opponent player) (- depth 1))))
+					(setf node (car (get_max (nth i moves) (opponent player) (- depth 1))))
 					(cond 
 						((eq player 'B)
 							(cond ((> minval (node-black node))
@@ -461,18 +477,20 @@ plyr - 'B or 'W representing the current player
 			)
 		)
 		
-		(when (> black white)
-			(format t "~%Black player won!~%")
-		)
+		; (when (> black white)
+		; 	(format t "~%Black player won!~%")
+		; )
 					
-		(when (< black white)
-			(format t "~%White player won!~%")
-		)
-		(format t "Player B Score: ~d~%" black)
-		(format t "Player W Score: ~d~%" white)
+		; (when (< black white)
+		; 	(format t "~%White player won!~%")
+		; )
+		; (format t "Player B Score: ~d~%" black)
+		; (format t "Player W Score: ~d~%" white)
 		(list black white)
 	)
 )
+
+
 
 
 (setf testboard '(B W B B W B B B 
