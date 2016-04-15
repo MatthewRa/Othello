@@ -8,102 +8,150 @@
 
 (defun StartGame(playerColor)
 
-	(setf board (createBoard))
-	(printBoard board)
-	
-	(cond
-		((equalp playerColor 'B)
-			(loop 
-				; Termination test
-				(when(null (member '- board)) return)
-				
-				; Player Makes Move
-				;Check if player B can make a move
-				(cond 
-					; Player has no moves
-					((null (gen_successors board playerColor))
-						(format t "~%Player B has no moves... ")
-					)
-					; Player can make a move
-					((not (null (gen_successors board playerColor)))
-						(format t "~%What is your move player B [row col]? ")
+	(let((playerMove nil))
+		(setf board (createBoard))
+		(printBoard board)
 		
-						(setf move (list (read) (read)))
-						
-						(format t "~%Your move: ~A~%" move)
-						(player_move board move 'B)
+		(cond
+			((equalp playerColor 'B)
+				(loop 
+					; Termination test
+					(when(null (member '- board))
+						(scoring_count board)
+						(return board)
 					)
-				)
+					
+					; Player Makes Move
+					;Check if player B can make a move
+					(cond 
+						; Player has no moves
+						((null (gen_successors board playerColor))
+							(format t "~%Player B has no moves...~%")
+						)
+						; Player can make a move
+						((not (null (gen_successors board playerColor)))
+							(setf playerMove nil)
+							(loop while (null playerMove) do
+								
+								(format t "~%What is your move player B [row col]? ")
+				
+								(setf move (list (read) (read)))
 
-				
-				(printBoard board)
-				
-				; Computer Makes Move
-				; Check if player W can make a move
-				(cond 
-					; Player has no moves
-					((null (gen_successors board playerColor))
-						(format t "~%Player W has no moves... ")
+								(setf playerMove (player_move board move 'B))
+								
+								(when (null playerMove)
+									(format t "~%Incorrect move, try again.~%" move)	
+								)
+							)
+						)
 					)
-					; Player can make a move
-					((not (null (gen_successors board playerColor)))
-						(format t "~%What is your move player W [row col]? ")
-						
-						(setf move (list (read) (read)))
-						
-						(format t "~%Your move: ~A~%" move)
-						(player_move board move 'W)
+					
+					(format t "~%About to print Board~%")
+					(printBoard board)
+					
+					; Termination test
+					(when(null (member '- board)) 
+						(scoring_count board)
+						(return board)
 					)
+					
+					; Computer Makes Move
+					; Check if player W can make a move
+					(cond 
+						; Player has no moves
+						((null (gen_successors board playerColor))
+							(format t "~%Player W has no moves...~%")
+						)
+						; Player can make a move
+						((not (null (gen_successors board playerColor)))
+							(setf playerMove nil)
+							(loop while (null playerMove) do
+								
+								(format t "~%What is your move player W [row col]? ")
+				
+								(setf move (list (read) (read)))
+
+								(setf playerMove (player_move board move 'W))
+								
+								(when (null playerMove)
+									(format t "~%Incorrect move, try again.~%" move)	
+								)
+							)
+						)
+					)
+					
+					(printBoard board)
 				)
-				
-				(printBoard board)
 			)
-		)
-		
-		((equalp playerColor 'W)
-			(loop 
-				; Termination test
-				(when(null (member '- board)) return)
+			
+			((equalp playerColor 'W)
+				(loop 
+					; Termination test
+					(when(null (member '- board))
+						(scoring_count board)
+						(return board)
+					)
+					
+					; Computer Makes Move
+					;Check if player B can make a move
+					(cond 
+						; Player has no moves
+						((null (gen_successors board playerColor))
+							(format t "~%Player B has no moves...~%")
+						)
+						; Player can make a move
+						((not (null (gen_successors board playerColor)))
+							(setf playerMove nil)
+							(loop while (null playerMove) do
+								
+								(format t "~%What is your move player B [row col]? ")
 				
-				; Computer Makes Move
-				;Check if player B can make a move
-				(cond 
-					; Player has no moves
-					((null (gen_successors board playerColor))
-						(format t "~%Player B has no moves... ")
+								(setf move (list (read) (read)))
+
+								(setf playerMove (player_move board move 'B))
+								
+								(when (null playerMove)
+									(format t "~%Incorrect move, try again.~%" move)	
+								)
+							)
+						)
 					)
-					; Player can make a move
-					((not (null (gen_successors board playerColor)))
-						(format t "~%What is your move player B [row col]? ")
-		
-						(setf move (list (read) (read)))
-						
-						(format t "~%Your move: ~A~%" move)
-						(player_move board move 'B)
+					
+					(printBoard board)
+					
+					; Termination test
+					(when(null (member '- board))
+						(scoring_count board)
+						(return board)
 					)
+					
+					; Player Makes Move
+					; Check if player W can make a move
+					(cond 
+						; Player has no moves
+						((null (gen_successors board playerColor))
+							(format t "~%Player W has no moves...~%")
+						)
+						; Player can make a move
+						((not (null (gen_successors board playerColor)))
+							(setf playerMove nil)
+							(loop while (null playerMove) do
+								
+								(format t "~%What is your move player W [row col]? ")
+				
+								(setf move (list (read) (read)))
+
+								(setf playerMove (player_move board move 'W))
+								
+								(when (null playerMove)
+									(format t "~%Incorrect move, try again.~%" move)	
+								)
+							)
+						)
+					)
+					
+					(printBoard board)
 				)
-				
-				(printBoard board)
-				
-				; Player Makes Move
-				; Check if player W can make a move
-				(cond 
-					; Player has no moves
-					((null (gen_successors board playerColor))
-						(format t "~%Player W has no moves... ")
-					)
-					; Player can make a move
-					((not (null (gen_successors board playerColor)))
-						(format t "~%What is your move player W [row col]? ")
-						
-						(setf move (list (read) (read)))
-						
-						(format t "~%Your move: ~A~%" move)
-						(player_move board move 'W)
-					)
-				)
-				
-				(printBoard board)
 			)
 		)
 	)
@@ -412,16 +460,26 @@ plyr - 'B or 'W representing the current player
 				((eq temp 'W) (setf white (1+ white)))
 			)
 		)
+		
+		(when (> black white)
+			(format t "~%Black player won!~%")
+		)
+					
+		(when (< black white)
+			(format t "~%White player won!~%")
+		)
+		(format t "Player B Score: ~d~%" black)
+		(format t "Player W Score: ~d~%" white)
 		(list black white)
 	)
 )
 
 
-(setf testboard '(B W - B - - B - 
-   				  - B - B - - B -
+(setf testboard '(B W B B W B B B 
+   				  B B W B W B B B
 				  W W B B B B B B
 				  W W W B B B W B
 				  W W B W B B W B 
 				  W B W B B B W W 
-				  W W B B B - - - 
-				  W W W W W - - - ))
+				  W W B B B W B W 
+				  W W W W W B W - ))
