@@ -3,7 +3,7 @@
 	player ; current player
 	black ; number of black pieces on board
 	white ; number of white pieces on board
-	score ; score assigned by evaluation of state or pieces
+	path ; list of lists to get to this state
 )
 
 (defun StartGame(playerColor)
@@ -325,40 +325,42 @@ plyr - 'B or 'W representing the current player
 
 ; Board is going to be a node - see node definition
 (defun minimax_ab(board player depth 
-	&optional (min 100000000) (max -1000000000) type)
+	&optional (min 100000000) (max -1000000000))
 	(cond
 		((eq depth 1)
 			(setf score (scoring_count board))
-			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
-			(list node)
+			(setf node (make-node :state board :player player 
+				:black (car score) :white (cadr score) :path (list board)))
 		)
-		(t (let* 
+		(t (let*
 			(
 				(moves (gen_successors board player))
-				(num_moves (cond 
-					((eq moves nil) 0)
-					(t (list-length moves))))
+				(num_moves (cond
+								((eq moves nil) 0)
+								(t (list-length moves))))
 				(opp (opponent player))
 			)
 			(dotimes (i num_moves)
-				(setf trace (minimax_ab (nth i moves) opp (- depth 1) min max (o_type type)))
-				(setf node (car trace))
+				(setf node (minimax_ab (nth i moves) opp (- depth 1) min max))
 				(cond ((not (eq node nil))
-				(cond 
-					((eq player 'B)
-						(setf temp_score (node-black node)))
-					(t (setf temp_score (node-white node)))
+					(cond 
+						((eq player 'B)
+							(setf temp_score (node-black node)))
+						(t (setf temp_score (node-white node)))
+					)
+					(cond 
+						((> min temp_score)
+							(setf min temp_score)
+							(setf node-path (cons board (node-path node)))
+							(setf bestnode node)
+						)
+						((< max temp_score)
+							(setf max temp_score)
+							(setf node-path (cons board (node-path node)))
+							(setf bestnode node)
+						)
+					))
 				)
-				(cond 
-					((> min temp_score)
-						(setf min temp_score)
-						(setf bestnode (list node board))
-					)
-					((< max temp_score)
-						(setf max temp_score)
-						(setf bestnode (list node board))
-					)
-				)))
 			)
 			bestnode
 			;(format t "NODE SCORE - BLACK: ~d  WHITE: ~d DEPTH: ~d~%" (node-black node) (node-white node) depth)
@@ -366,102 +368,6 @@ plyr - 'B or 'W representing the current player
 	)
 )
 
-
-
-
-(defun get_max(board player depth)
-	(cond 
-		((eq depth 0)
-			(setf score (scoring_count board))
-			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
-			; (format t "I'm at the MAX BLACK: ~vd WHITE: ~vd~%" 2 (node-black node) 2 (node-white node))
-			; (format t "I'm at the MAX and depth 0~%")
-			; (printBoard board)
-			(list node)
-		)
-		(t 
-			(let*
-				(
-					(maxval -10000000) ; negative infinity
-					(moves (gen_successors board player))
-					(highest 10000000)
-					(num_moves 
-						(cond((eq moves nil) 0)
-							(t (list-length moves))
-						)
-					)
-				) 
-				(dotimes (i num_moves)
-					;(format t "DEPTH:~vd MAXVALUE: ~vd HIGHEST: ~vd~%" 2 depth 2 maxval 2 highest)
-					;(cond (and T T) ;(< maxval highest)
-					(setf node (car (get_min (nth i moves) (opponent player) (- depth 1))))
-					(setf highest (- (+ (node-white node) (node-black node)) 1))
-					(cond 
-						((eq player 'B)
-							(cond ((< maxval (node-black node))
-								(setf maxval (node-black node))
-								(setf bestnode (list node (nth i moves) depth))
-							)))
-						((eq player 'W)
-							(cond ((< maxval (node-white node))
-								(setf maxval (node-white node))
-								(setf bestnode (list node (nth i moves) depth))
-							)))
-						
-					)
-				)
-				bestnode
-			)
-		)
-	)
-)
-
-
-; Board is going to be a node - see node definition
-(defun get_min(board player depth)
-	(cond 
-		((eq depth 0)
-			(setf score (scoring_count board))
-			(setf node (make-node :state board :player player :black (car score) :white (cadr score)))
-			; (format t "I'm at the MIN BLACK: ~vd WHITE: ~vd~%" 2 (node-black node) 2 (node-white node))
-			; (printBoard board)
-			(list node)
-		)
-		(t 
-			(let*
-				(
-					(minval 10000000) ; positive infinity
-					(moves (gen_successors board player))
-					(lowest 1)
-					(num_moves 
-						(cond((eq moves nil) 0)
-							(t (list-length moves))
-						)
-					)
-				) 
-				(dotimes (i num_moves)
-					;(format t "DEPTH:~vd MINVALUE: ~vd LOWEST: ~vd~%" 2 depth 2 minval 2 lowest)
-					;(cond (and T T)	; > minval lowest
-					(setf node (car (get_max (nth i moves) (opponent player) (- depth 1))))
-					(cond 
-						((eq player 'B)
-							(cond ((> minval (node-black node))
-								(setf minval (node-black node))							
-								(setf bestnode (list node (nth i moves) depth))
-							)))
-						((eq player 'W)
-							(cond ((> minval (node-white node))
-								(setf minval (node-white node))
-								(setf bestnode (list node (nth i moves) depth))
-							)))
-						
-					)
-				)
-				bestnode
-			)
-		)
-	)
-)
 
 (defun scoring_count (board)
 	(let
