@@ -6,6 +6,10 @@
 	score ; score assigned by evaluation of state or pieces
 )
 
+(defun othello-init ()
+
+)
+
 (defun StartGame(playerColor)
 
 	(let((playerMove nil))
@@ -22,31 +26,8 @@
 					)
 					
 					; Player Makes Move
-					;Check if player B can make a move
-					(cond 
-						; Player has no moves
-						((null (gen_successors board playerColor))
-							(format t "~%Player B has no moves...~%")
-						)
-						; Player can make a move
-						((not (null (gen_successors board playerColor)))
-							(setf playerMove nil)
-							(loop while (null playerMove) do
-								
-								(format t "~%What is your move player B [row col]? ")
-				
-								(setf move (list (read) (read)))
-
-								(setf playerMove (player_move board move 'B))
-								
-								(when (null playerMove)
-									(format t "~%Incorrect move, try again.~%" move)	
-								)
-							)
-						)
-					)
+					(setf board (playerTurn board 'B))
 					
-					(format t "~%About to print Board~%")
 					(printBoard board)
 					
 					; Termination test
@@ -57,28 +38,8 @@
 					
 					; Computer Makes Move
 					; Check if player W can make a move
-					(cond 
-						; Player has no moves
-						((null (gen_successors board playerColor))
-							(format t "~%Player W has no moves...~%")
-						)
-						; Player can make a move
-						((not (null (gen_successors board playerColor)))
-							(setf playerMove nil)
-							(loop while (null playerMove) do
-								
-								(format t "~%What is your move player W [row col]? ")
-				
-								(setf move (list (read) (read)))
-
-								(setf playerMove (player_move board move 'W))
-								
-								(when (null playerMove)
-									(format t "~%Incorrect move, try again.~%" move)	
-								)
-							)
-						)
-					)
+					(setf board (playerTurn board 'W))
+					;(make-move board 'W 4)
 					
 					(printBoard board)
 				)
@@ -92,30 +53,9 @@
 						(return board)
 					)
 					
-					; Computer Makes Move
-					;Check if player B can make a move
-					(cond 
-						; Player has no moves
-						((null (gen_successors board playerColor))
-							(format t "~%Player B has no moves...~%")
-						)
-						; Player can make a move
-						((not (null (gen_successors board playerColor)))
-							(setf playerMove nil)
-							(loop while (null playerMove) do
-								
-								(format t "~%What is your move player B [row col]? ")
-				
-								(setf move (list (read) (read)))
-
-								(setf playerMove (player_move board move 'B))
-								
-								(when (null playerMove)
-									(format t "~%Incorrect move, try again.~%" move)	
-								)
-							)
-						)
-					)
+					; Computer B Makes Move
+					(setf board (playerTurn board 'B))
+					;(make-move board 'B 4)
 					
 					(printBoard board)
 					
@@ -125,30 +65,8 @@
 						(return board)
 					)
 					
-					; Player Makes Move
-					; Check if player W can make a move
-					(cond 
-						; Player has no moves
-						((null (gen_successors board playerColor))
-							(format t "~%Player W has no moves...~%")
-						)
-						; Player can make a move
-						((not (null (gen_successors board playerColor)))
-							(setf playerMove nil)
-							(loop while (null playerMove) do
-								
-								(format t "~%What is your move player W [row col]? ")
-				
-								(setf move (list (read) (read)))
-
-								(setf playerMove (player_move board move 'W))
-								
-								(when (null playerMove)
-									(format t "~%Incorrect move, try again.~%" move)	
-								)
-							)
-						)
-					)
+					; Player W Makes Move
+					(setf board (playerTurn board 'W))
 					
 					(printBoard board)
 				)
@@ -156,6 +74,33 @@
 		)
 	)
 	
+)
+
+(defun playerTurn (board playerColor)
+	(cond 
+		; Player has no moves
+		((null (gen_successors board playerColor))
+			(format t "~%Player ~s has no moves...~%" playerColor)
+		)
+		; Player can make a move
+		((not (null (gen_successors board playerColor)))
+			(setf playerMove nil)
+			(loop while (null playerMove) do
+				
+				(format t "~%What is your move player ~s [row col]? " playerColor)
+
+				(setf move (list (read) (read)))
+
+				(setf playerMove (player_move board move playerColor))
+				
+				(when (null playerMove)
+					(format t "~%Incorrect move, try again.~%" move)	
+				)
+			)
+		)
+	)
+	
+	board
 )
 
 ; Switches opponent ID based on player ID
@@ -233,7 +178,9 @@
 	)
 )
 
-(defun make-move ())
+(defun make-move (board playerColor ply)
+
+)
 
 ; print board state
 (defun printBoard (board)
