@@ -272,27 +272,26 @@ plyr - 'B or 'W representing the current player
 
 ; Board is going to be a node - see node definition
 (defun minimax_ab(board player depth 
-	&optional (min 100000000) (max -1000000000) (path '()))
+	&optional (min 100000000) (max -1000000000) (path '()) (type 'max))
+	(setf moves (gen_successors board player))
 	(cond
-		((eq depth 1)
+		((or (eq depth 1) (null moves))
 			(setf score (scoring_count board))
 			(setf node (make-node :state board :player player 
 				:black (car score) :white (cadr score) :path path))
 		)
-		(t (let*
+		(t (let
 			(
-				(moves (gen_successors board player))
-				(num_moves (cond
-								((eq moves nil) 0)
-								(t (list-length moves))))
+				(num_moves (list-length moves))
 				(opp (opponent player))
 				(path (cons board path))
-
+				(temp_score 0)
 			)
 			(dotimes (i num_moves)
-				(setf node (minimax_ab (nth i moves) opp (- depth 1) min max path))
-				;(setf (node-path node) (cons board (node-path node)))
-				(cond ((not (eq node nil))
+				(cond ((or (and (eq type 'min) (> temp_score max)) 
+					(and (eq type 'max) (< temp_score min)))
+					(setf node (minimax_ab (nth i moves) 
+						opp (- depth 1) min max path (o_type type)))
 					(cond 
 						((eq player 'B)
 							(setf temp_score (node-black node)))
@@ -301,12 +300,10 @@ plyr - 'B or 'W representing the current player
 					(cond 
 						((> min temp_score)
 							(setf min temp_score)
-							;(setf (node-path node) (cons board (node-path node)))
 							(setf bestnode node)
 						)
 						((< max temp_score)
 							(setf max temp_score)
-							;(setf (node-path node) (cons board (node-path node)))
 							(setf bestnode node)
 						)
 					))
