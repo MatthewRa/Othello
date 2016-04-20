@@ -3,6 +3,7 @@
 	player ; current player
 	black ; number of black pieces on board
 	white ; number of white pieces on board
+	score ; the score of the player W or B
 	path ; list of lists to get to this state
 )
 
@@ -277,36 +278,38 @@ plyr - 'B or 'W representing the current player
 	(cond
 		((or (eq depth 1) (null moves))
 			(setf score (scoring_count board))
+			(format t "SCORING @ DEPTH: ~d~%" depth)
 			(setf node (make-node :state board :player player 
-				:black (car score) :white (cadr score) :path path))
+				:black (car score) :white (cadr score) 
+				:score (score_board board player type) :path path))
 		)
 		(t (let
 			(
 				(num_moves (list-length moves))
 				(opp (opponent player))
 				(path (cons board path))
-				(temp_score 0)
 			)
 			(dotimes (i num_moves)
-				(cond ((or (and (eq type 'min) (> temp_score max)) 
-					(and (eq type 'max) (< temp_score min)))
-					(setf node (minimax_ab (nth i moves) 
-						opp (- depth 1) min max path (o_type type)))
-					(cond 
-						((eq player 'B)
-							(setf temp_score (node-black node)))
-						(t (setf temp_score (node-white node)))
+				(setf node (minimax_ab (nth i moves) 
+					opp (- depth 1) min max path (o_type type)))
+				(setf temp_score (node-score node))
+				(format t "temp score: ~d black: ~d~%" temp_score (node-score node))
+				(format t "DEPTH: ~d~%" depth)
+				(printBoard (nth i moves))
+				; (cond 
+				; 	((eq player 'B)
+				; 		(setf temp_score (node-black node)))
+				; 	(t (setf temp_score (node-white node)))
+				; )
+				(cond
+					((> min temp_score)
+						(setf min temp_score)
+						(setf bestnode node)
 					)
-					(cond 
-						((> min temp_score)
-							(setf min temp_score)
-							(setf bestnode node)
-						)
-						((< max temp_score)
-							(setf max temp_score)
-							(setf bestnode node)
-						)
-					))
+					((< max temp_score)
+						(setf max temp_score)
+						(setf bestnode node)
+					)
 				)
 			)
 			bestnode
@@ -340,6 +343,30 @@ plyr - 'B or 'W representing the current player
 		; (format t "Player B Score: ~d~%" black)
 		; (format t "Player W Score: ~d~%" white)
 		(list black white)
+	)
+)
+
+(defun score_board (board player type)
+	(let
+		(
+			(player (cond 
+				((eq type 'max) player)
+				(t (opponent player))))
+			(white 0)
+			(black 0)
+		)
+		(dotimes (i 64)
+			(setf temp (nth i board))
+			(cond 
+				((eq temp 'B) (setf black (1+ black)))
+				((eq temp 'W) (setf white (1+ white)))
+			)
+		)
+		(printBoard board)
+		(cond
+			((eq player 'B) black)
+			(t white) 
+		)
 	)
 )
 
