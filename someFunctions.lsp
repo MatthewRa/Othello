@@ -11,12 +11,16 @@
 
 )
 
+; This is the entry point of the othello game
+; Depending on what the place chose either the computer or person will go first
 (defun StartGame(playerColor)
 
 	(let((playerMove nil))
+		; Create the board
 		(setf board (createBoard))
 		(printBoard board)
 		
+		; Check if the human or AI goes first
 		(cond
 			((equalp playerColor 'B)
 				(loop 
@@ -180,7 +184,7 @@
 )
 
 (defun make-move (board playerColor ply)
-
+	(setf temp (minimax_ab board playerColor ply))
 )
 
 ; print board state
