@@ -43,8 +43,8 @@
 					
 					; Computer Makes Move
 					; Check if player W can make a move
-					(setf board (playerTurn board 'W))
-					;(make-move board 'W 4)
+					;(setf board (playerTurn board 'W))
+					(make-move board 'W 4)
 					
 					(printBoard board)
 				)
@@ -59,8 +59,8 @@
 					)
 					
 					; Computer B Makes Move
-					(setf board (playerTurn board 'B))
-					;(make-move board 'B 4)
+					;(setf board (playerTurn board 'B))
+					(make-move board 'B 4)
 					
 					(printBoard board)
 					
@@ -184,7 +184,24 @@
 )
 
 (defun make-move (board playerColor ply)
-	(setf temp (minimax_ab board playerColor ply))
+	(let* 
+		(
+			(node (minimax board playerColor (1- ply)))
+			(path_length (list-length (node-path node)))
+		)
+		
+		(cond 
+			; Player has no moves
+			((null (gen_successors board playerColor))
+				(format t "~%Player ~s has no moves...~%" playerColor)
+			)
+			; Player can make a move
+			((not (null (gen_successors board playerColor)))
+				(setf board (nth (- path_length 2) (node-path node)))
+			)
+		)
+		board
+	) 
 )
 
 (defun testmakemove (board player ply)
