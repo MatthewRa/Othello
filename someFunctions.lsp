@@ -1,8 +1,8 @@
 (defstruct node
 	state ; 8x8 representation of board
-	player ; current player
-	black ; number of black pieces on board
-	white ; number of white pieces on board
+	;player ; current player
+	;black ; number of black pieces on board
+	;white ; number of white pieces on board
 	score ; the score of the player W or B
 	path ; list of lists to get to this state
 )
@@ -187,6 +187,18 @@
 	(setf temp (minimax_ab board playerColor ply))
 )
 
+(defun testmakemove (board player ply)
+	(let* 
+		(
+			(node (minimax board player (1- ply)))
+			(path_length (list-length (node-path node)))
+		)
+		(setf board (nth (- path_length 2) (node-path node)))
+		(printBoard board)
+		board
+	) 
+)
+
 ; print board state
 (defun printBoard (board)
 	(format t "  1 2 3 4 5 6 7 8~%")
@@ -276,49 +288,45 @@ plyr - 'B or 'W representing the current player
 
 
 ; Board is going to be a node - see node definition
-(defun minimax_ab(board player depth 
-	&optional (min 100000000) (max -1000000000) (path '()) (type 'max))
-	(setf moves (gen_successors board player))
-	(cond
-		((or (eq depth 1) (null moves))
-			(setf score (scoring_count board))
-			(format t "SCORING @ DEPTH: ~d~%" depth)
-			(setf node (make-node :state board :player player 
-				:black (car score) :white (cadr score) 
-				:score (score_board board player type) :path path))
+(defun minimax (board player depth &optional (type 'max) (path '())
+				(alpha -1000000) (beta 1000000))
+	(let
+		( 
+			(moves (gen_successors board player))
+			(min_value 1000000)
+			(max_value -1000000)
+			(next (o_type type))
+			(opp (opponent player))
+			(path (cons board path))
+			(bestnode nil)
 		)
-		(t (let
-			(
-				(num_moves (list-length moves))
-				(opp (opponent player))
-				(path (cons board path))
+		(cond 
+			((or (eq depth 0)(eq moves nil))
+				(setf node (make-node :state board :score (score_board board player type) :path path))
 			)
-			(dotimes (i num_moves)
-				(setf node (minimax_ab (nth i moves) 
-					opp (- depth 1) min max path (o_type type)))
-				(setf temp_score (node-score node))
-				(format t "temp score: ~d black: ~d~%" temp_score (node-score node))
-				(format t "DEPTH: ~d~%" depth)
-				(printBoard (nth i moves))
-				; (cond 
-				; 	((eq player 'B)
-				; 		(setf temp_score (node-black node)))
-				; 	(t (setf temp_score (node-white node)))
-				; )
-				(cond
-					((> min temp_score)
-						(setf min temp_score)
-						(setf bestnode node)
-					)
-					((< max temp_score)
-						(setf max temp_score)
-						(setf bestnode node)
+			((not (null board))
+				;(format t "DEPTH: ~d PLAYER: ~s~%" depth player)
+				(dotimes (i (list-length moves))
+					(cond ((> beta alpha)
+						(setf node (minimax (nth i moves) opp (1- depth) next path alpha beta))
+						(cond 
+							((and (not (null node)) (eq type 'max) (< max_value (node-score node)))
+								(setf max_value (node-score node))
+								(cond ((< alpha max_value) (setf alpha max_value)))
+								(setf bestnode node)
+							)
+							((and (not (null node)) (eq type 'min) (> min_value (node-score node)))
+								(setf min_value (node-score node))
+								(cond ((> beta min_value) (setf beta min_value)))
+								(setf bestnode node)
+							)
+						))
+						;(t (format t "CUT PLAY: ~d DEPTH: ~d PLAYER: ~s TYPE: ~s~%" i depth player type))
 					)
 				)
+				bestnode 
 			)
-			bestnode
-			;(format t "NODE SCORE - BLACK: ~d  WHITE: ~d DEPTH: ~d~%" (node-black node) (node-white node) depth)
-		))
+		)
 	)
 )
 
@@ -359,6 +367,7 @@ plyr - 'B or 'W representing the current player
 			(white 0)
 			(black 0)
 		)
+		;(printBoard board)
 		(dotimes (i 64)
 			(setf temp (nth i board))
 			(cond 
@@ -366,7 +375,7 @@ plyr - 'B or 'W representing the current player
 				((eq temp 'W) (setf white (1+ white)))
 			)
 		)
-		(printBoard board)
+		;(format t "WHITE: ~d BLACK: ~d~%" white black)
 		(cond
 			((eq player 'B) black)
 			(t white) 
