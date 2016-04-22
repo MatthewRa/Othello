@@ -330,6 +330,50 @@ plyr - 'B or 'W representing the current player
 	)
 )
 
+(defun diet_minimax (board player depth &optional (type 'max) 
+				(alpha -1000000) (beta 1000000))
+	(let
+		( 
+			(moves (gen_successors board player))
+			(min_value 1000000)
+			(max_value -1000000)
+			(next (o_type type))
+			(opp (opponent player))
+			(beststate nil)
+		)
+		(cond 
+			((or (eq depth 0)(eq moves nil))
+				(setf score (list (score_board board player type) board))
+				(format t "SCORE: ~d DEPTH: ~d PLAYER: ~s~%" (car score) depth player)
+				(printBoard (cadr score))
+			)
+			((not (null board))
+				(format t "****NOW AT DEPTH: ~d   ****~%" depth)
+				(dotimes (i (list-length moves))
+					(cond ((> beta alpha)
+						(setf child (diet_minimax (nth i moves) opp (1- depth) next alpha beta))
+						(setf score (car child))
+						(cond 
+							((and (not (null score)) (eq type 'max) (< max_value score))
+								(setf max_value score)
+								(cond ((< alpha max_value) (setf alpha max_value)))
+								(setf beststate (list score (nth i moves)))
+							)
+							((and (not (null score)) (eq type 'min) (> min_value score))
+								(setf min_value score)
+								(cond ((> beta min_value) (setf beta min_value)))
+								(setf beststate (list score (nth i moves)))
+							)
+						))
+						(t (format t "CUT PLAY: ~d DEPTH: ~d PLAYER: ~s TYPE: ~s~%" i depth player type))
+					)
+				)
+				beststate 
+			)
+		)
+	)
+)
+
 
 (defun scoring_count (board)
 	(let
