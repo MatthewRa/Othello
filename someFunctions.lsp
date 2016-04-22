@@ -44,7 +44,7 @@
 					; Computer Makes Move
 					; Check if player W can make a move
 					;(setf board (playerTurn board 'W))
-					(make-move board 'W 4)
+					(setf board (make-move board 'W 4))
 					
 					(printBoard board)
 				)
@@ -60,7 +60,7 @@
 					
 					; Computer B Makes Move
 					;(setf board (playerTurn board 'B))
-					(make-move board 'B 4)
+					(setf board (make-move board 'B 4))
 					
 					(printBoard board)
 					
