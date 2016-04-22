@@ -385,6 +385,7 @@ plyr - 'B or 'W representing the current player
 						(t (format t "CUT PLAY: ~d DEPTH: ~d PLAYER: ~s TYPE: ~s~%" i depth player type))
 					)
 				)
+				(format t "####RETURNING FROM DEPTH: ~d SCORE: ~d ALPHA: ~d BETA: ~d    ####~%" depth (car beststate) alpha beta)
 				beststate 
 			)
 		)
