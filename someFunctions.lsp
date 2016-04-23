@@ -352,8 +352,8 @@ plyr - 'B or 'W representing the current player
 	(let
 		( 
 			(moves (gen_successors board player))
-			;(min_value 1000000)
-			;(max_value -1000000)
+			(min_value 1000000)
+			(max_value -1000000)
 			(next (o_type type))
 			(opp (opponent player))
 			(beststate nil)
@@ -361,36 +361,27 @@ plyr - 'B or 'W representing the current player
 		(cond 
 			((or (eq depth 0)(eq moves nil))
 				(setf score (list (score_board board player type) board))
-				(format t "SCORE: ~d DEPTH: ~d PLAYER: ~s~%" (car score) depth player)
-				;(printBoard (cadr score))
-				score
 			)
 			((not (null board))
-				(format t "****NOW AT DEPTH: ~d   ****~%" depth)
 				(dotimes (i (list-length moves))
-					(cond ((> beta alpha)
-						(setf child (diet_minimax (nth i moves) opp (1- depth) next alpha beta))
-						(format t "****BACK AT DEPTH: ~d   ****~%" depth)
-						(setf score (car child))
-						(cond 
-							((and (not (null score)) (eq type 'max) (< alpha score))
-								;(setf max_value score)
-								;(cond ((< alpha max_value) (setf alpha max_value)))
-								(setf alpha score)
-								(setf beststate (list score (nth i moves)))
-							)
-							((and (not (null score)) (eq type 'min) (> beta score))
-								;(setf min_value score)
-								;(cond ((> beta min_value) (setf beta min_value)))
-								(setf beta score)
-								(setf beststate (list score (nth i moves)))
-							)
-						) (format t "------- ALPHA: ~d BETA ~d ---------~%" alpha beta))
-						(t (format t "------- ALPHA: ~d BETA ~d ---------~%" alpha beta) (format t "CUT PLAY: ~d DEPTH: ~d PLAYER: ~s TYPE: ~s~%" i depth player type))
-					)
+					(setf child (diet_minimax (nth i moves) opp (1- depth) next alpha beta))
+					(setf score (car child))
+					(cond 
+						((and (not (null score)) (eq type 'max) (> score max_value))
+							(setf max_value score)
+							(setf beststate (list score (nth i moves)))
+							(cond ((> score alpha) (setf alpha score)))
+							(cond ((<= beta alpha) (return beststate)))
+						)
+						((and (not (null score)) (eq type 'min) (< score min_value))
+							(setf min_value score)
+							(setf beststate (list score (nth i moves)))
+							(cond ((< score beta) (setf beta score)))
+							(cond ((<= beta alpha) (return beststate)))
+						)
+					) 
 				)
-				(format t "####RETURNING FROM DEPTH: ~d SCORE: ~d ALPHA: ~d BETA: ~d    ####~%~%" depth (car beststate) alpha beta)
-				beststate 
+				beststate
 			)
 		)
 	)
@@ -460,3 +451,6 @@ plyr - 'B or 'W representing the current player
 				  W B W B B B W W 
 				  W W B B B W B W 
 				  W W W W W B W - ))
+
+
+
