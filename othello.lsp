@@ -25,16 +25,20 @@ Inside CLISP
 
 (load 'othelloFunctions)
 
+; This function will prompt the user if they would like to play another game of othello.
 (defun playAgain ()
 	; Prompt user if the would like to play again
 	(format t "~%~%Would you like to play again? [y/n]? ")
 	
+	; Read input 
 	(setf again (read))
 	
+	; Start another game of othello if the player says yes
 	(when (equalp again 'y)
 		(othello)
 	)
 	
+	; Exit game if player doesn't want to play again.
 	(when (equalp again 'n)
 		(format t "Thanks for playing!~%")
 		(exit)
@@ -44,17 +48,20 @@ Inside CLISP
 ;Starting point of othello program
 (defun othello ( &optional args )
 	(cond
+		; Othello was started in clisp repl as (othello "Black/White")
 		((null (listp args))
 			(print args)
 			(setf playerColor args)
 		)
 		
+		; Othello was started in command line given a color
 		((= (length args) 1)
 			(when (listp args)
 				(setf playerColor (car args))
 			)
 		)
 		
+		; Othello was started in clisp repl as (othello)
 		((= (length args) 0)
 			; Propmpt player if they would like to go first or second
 			(format t "Would you like to move first [y/n]? ")
@@ -72,7 +79,7 @@ Inside CLISP
 		)
 	)
 	
-	;(format t "Player Color: ~A~%" playerColor)
+	; Check chosen player color and output correct statement to user
 	
 	(when (equalp playerColor "Black")
 		(format t "~%OK! You will be playing Black. When asked for your move, please enter ") 
@@ -88,12 +95,14 @@ Inside CLISP
 		(setf playerColor 'W)
 	)
 	
-	;Begin Othello
+	; Begin Othello
 	(StartGame playerColor)
 	
+	; Prompt user to player again
 	(playAgain)
 )
 
+; call othello if parameters were passed in
 (when (= (length *ARGS*) 1)
 	(othello *ARGS*)
 )
