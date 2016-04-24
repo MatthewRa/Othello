@@ -10,7 +10,7 @@ Written Spring 2016 for CSC447/547 AI class.
 
 ;--------------------------------------------------------------------------
 
-(load 'someFunctions)
+(load 'othelloFunctions)
 
 (defun playAgain ()
 	; Prompt user if the would like to play again

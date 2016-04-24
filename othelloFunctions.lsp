@@ -183,25 +183,19 @@
 	)
 )
 
-(defun make-move (board playerColor ply)
-	(let* 
-		(
-			(node (minimax board playerColor (1- ply)))
-			(path_length (list-length (node-path node)))
+(defun make-move (board playerColor ply)	
+	(cond 
+		; Player has no moves
+		((null (gen_successors board playerColor))
+			(format t "~%Player ~s has no moves...~%" playerColor)
 		)
-		
-		(cond 
-			; Player has no moves
-			((null (gen_successors board playerColor))
-				(format t "~%Player ~s has no moves...~%" playerColor)
-			)
-			; Player can make a move
-			((not (null (gen_successors board playerColor)))
-				(setf board (nth (- path_length 2) (node-path node)))
-			)
+		; Player can make a move
+		((not (null (gen_successors board playerColor)))
+			(format t "~%~s players move...~%" playerColor)
+			(setf board (nth 1 (diet_minimax board playerColor ply)))
 		)
-		board
-	) 
+	)
+	board
 )
 
 (defun testmakemove (board player ply)
@@ -450,7 +444,8 @@ plyr - 'B or 'W representing the current player
 				  W W B W B B W B 
 				  W B W B B B W W 
 				  W W B B B W B W 
-				  W W W W W B W - ))
+				  W W W W W B W - )
+ )
 
 
 
