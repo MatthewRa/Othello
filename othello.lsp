@@ -6,6 +6,19 @@
 Author: Steve Huerta, Matthew Rames
 Written Spring 2016 for CSC447/547 AI class.
 
+This file contains the main function for othello as well as a function to handle
+starting another game. Othello can be started via command line or from inside 
+CLISP read eval print loop, see below for examples. 
+
+Command Line:
+	clisp othello.lsp (Black or White)
+	
+Inside CLISP
+	(load 'othello)
+	(othello) OR (othello "Black")
+				 (othello "White")
+
+
 |#
 
 ;--------------------------------------------------------------------------
@@ -31,8 +44,15 @@ Written Spring 2016 for CSC447/547 AI class.
 ;Starting point of othello program
 (defun othello ( &optional args )
 	(cond
+		((null (listp args))
+			(print args)
+			(setf playerColor args)
+		)
+		
 		((= (length args) 1)
-			(setf playerColor (car args))
+			(when (listp args)
+				(setf playerColor (car args))
+			)
 		)
 		
 		((= (length args) 0)
@@ -62,10 +82,10 @@ Written Spring 2016 for CSC447/547 AI class.
 	)
 	
 	(when (equalp playerColor "White")
-			(format t "~%OK! You will be playing White. When asked for your move, please enter ")
-			(format t "the row and column in which you would like to place a White stone. Remember, ")
-			(format t "you must outflank atleast one Black stone, or forfeit your move. ~%~%")
-			(setf playerColor 'W)
+		(format t "~%OK! You will be playing White. When asked for your move, please enter ")
+		(format t "the row and column in which you would like to place a White stone. Remember, ")
+		(format t "you must outflank atleast one Black stone, or forfeit your move. ~%~%")
+		(setf playerColor 'W)
 	)
 	
 	;Begin Othello
