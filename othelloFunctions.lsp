@@ -1,3 +1,16 @@
+#|
+                    ***** othelloFunctions.lsp *****
+
+
+
+Author: Steve Huerta, Matthew Rames
+Written Spring 2016 for CSC447/547 AI class.
+
+|#
+
+;--------------------------------------------------------------------------
+
+
 (defstruct node
 	state ; 8x8 representation of board
 	;player ; current player
@@ -5,10 +18,6 @@
 	;white ; number of white pieces on board
 	score ; the score of the player W or B
 	path ; list of lists to get to this state
-)
-
-(defun othello-init ()
-
 )
 
 ; This is the entry point of the othello game
@@ -90,7 +99,6 @@
 			)
 		)
 	)
-	
 )
 
 (defun playerTurn (board playerColor)
@@ -116,8 +124,26 @@
 			)
 		)
 	)
-	
 	board
+)
+
+(defun make-move (board playerColor ply)	
+	(cond 
+		; Player has no moves
+		((null (gen_successors board playerColor))
+			(format t "~%Player ~s has no moves...~%" playerColor)
+		)
+		; Player can make a move
+		((not (null (gen_successors board playerColor)))
+			(format t "~%~s players move...~%" playerColor)
+			(setf board (nth 1 (diet_minimax board playerColor ply)))
+		)
+	)
+	board
+)
+
+(defun othello-init ()
+
 )
 
 ; Switches opponent ID based on player ID
@@ -193,21 +219,6 @@
 			(t nil)
 		)
 	)
-)
-
-(defun make-move (board playerColor ply)	
-	(cond 
-		; Player has no moves
-		((null (gen_successors board playerColor))
-			(format t "~%Player ~s has no moves...~%" playerColor)
-		)
-		; Player can make a move
-		((not (null (gen_successors board playerColor)))
-			(format t "~%~s players move...~%" playerColor)
-			(setf board (nth 1 (diet_minimax board playerColor ply)))
-		)
-	)
-	board
 )
 
 (defun testmakemove (board player ply)
