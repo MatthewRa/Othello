@@ -21,7 +21,7 @@ Written Spring 2016 for CSC447/547 AI class.
 )
 
 ; This is the entry point of the othello game
-; Depending on what the place chose either the computer or person will go first
+; Depending on what the color the user chose either the computer or user will go first
 (defun StartGame(playerColor)
 
 	(let((playerMove nil))
@@ -57,8 +57,6 @@ Written Spring 2016 for CSC447/547 AI class.
 					)
 					
 					; Computer Makes Move
-					; Check if player W can make a move
-					;(setf board (playerTurn board 'W))
 					(setf board (make-move board 'W 4))
 					
 					(printBoard board)
@@ -77,7 +75,6 @@ Written Spring 2016 for CSC447/547 AI class.
 					)
 					
 					; Computer B Makes Move
-					;(setf board (playerTurn board 'B))
 					(setf board (make-move board 'B 4))
 					
 					(printBoard board)
@@ -101,6 +98,7 @@ Written Spring 2016 for CSC447/547 AI class.
 	)
 )
 
+; This function handles a users turn in othello
 (defun playerTurn (board playerColor)
 	(cond 
 		; Player has no moves
@@ -110,14 +108,18 @@ Written Spring 2016 for CSC447/547 AI class.
 		; Player can make a move
 		((not (null (gen_successors board playerColor)))
 			(setf playerMove nil)
+			; While the player move is null keep prompting the user to make a move
 			(loop while (null playerMove) do
 				
+				; Prompt user for row and col
 				(format t "~%What is your move player ~s [row col]? " playerColor)
 
 				(setf move (list (read) (read)))
 
+				; Attempt to make a player move
 				(setf playerMove (player_move board move playerColor))
 				
+				; If incorrect move display error message
 				(when (null playerMove)
 					(format t "~%Incorrect move, try again.~%" move)	
 				)
@@ -127,6 +129,7 @@ Written Spring 2016 for CSC447/547 AI class.
 	board
 )
 
+; Function called for an AI's turn
 (defun make-move (board playerColor ply)	
 	(cond 
 		; Player has no moves
