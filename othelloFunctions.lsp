@@ -25,7 +25,10 @@
 			((equalp playerColor 'B)
 				(loop 
 					; Termination test
-					(when(null (member '- board))
+					(when 	(or 
+								(null (member '- board)) 
+								(or (null (member 'W board)) (null (member 'B board)))
+							)
 						(scoring_count board)
 						(return board)
 					)
@@ -36,7 +39,10 @@
 					(printBoard board)
 					
 					; Termination test
-					(when(null (member '- board)) 
+					(when 	(or 
+								(null (member '- board)) 
+								(or (null (member 'W board)) (null (member 'B board)))
+							)
 						(scoring_count board)
 						(return board)
 					)
@@ -53,7 +59,10 @@
 			((equalp playerColor 'W)
 				(loop 
 					; Termination test
-					(when(null (member '- board))
+					(when 	(or 
+								(null (member '- board)) 
+								(or (null (member 'W board)) (null (member 'B board)))
+							)
 						(scoring_count board)
 						(return board)
 					)
@@ -65,7 +74,10 @@
 					(printBoard board)
 					
 					; Termination test
-					(when(null (member '- board))
+					(when 	(or 
+								(null (member '- board)) 
+								(or (null (member 'W board)) (null (member 'B board)))
+							)
 						(scoring_count board)
 						(return board)
 					)
@@ -396,15 +408,15 @@ plyr - 'B or 'W representing the current player
 			)
 		)
 		
-		; (when (> black white)
-		; 	(format t "~%Black player won!~%")
-		; )
+		(when (> black white)
+			(format t "~%black player won!~%")
+		)
 					
-		; (when (< black white)
-		; 	(format t "~%White player won!~%")
-		; )
-		; (format t "Player B Score: ~d~%" black)
-		; (format t "Player W Score: ~d~%" white)
+		(when (< black white)
+			(format t "~%white player won!~%")
+		)
+		(format t "player b score: ~d~%" black)
+		(format t "player w score: ~d~%" white)
 		(list black white)
 	)
 )
