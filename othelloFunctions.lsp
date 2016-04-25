@@ -15,16 +15,6 @@ generating successors of a board state.
 
 ;--------------------------------------------------------------------------
 
-; Node structure for mini-max tree
-(defstruct node
-	state ; 8x8 representation of board
-	;player ; current player
-	;black ; number of black pieces on board
-	;white ; number of white pieces on board
-	score ; the score of the player W or B
-	path ; list of lists to get to this state
-)
-
 ; This is the entry point of the othello game
 ; Depending on what the color the user chose either the computer or user will go first
 (defun StartGame(playerColor)
@@ -163,7 +153,8 @@ generating successors of a board state.
 	)
 )
 
-(defun o_type (type)
+; This function switchs player type from max to min and vice versa
+(defun switchPlayerType (type)
 	(let ((other_type 'min))
 		(cond ((eq type 'min) (setf other_type 'max)))
 		other_type
@@ -179,22 +170,6 @@ generating successors of a board state.
 		(setf (nth 35 board) 'B)
 		board
 	)
-)
-
-; Just to get some formatted board states
-(defun test_gen_succ (board player)
-	(let ((states (gen_successors board player)))
-		(dotimes (i (list-length states))
-			(printBoard (nth i states))
-		)
-	) 
-)
-
-; testing minimax, seems to have issues with depths greater than nine....
-; more troubleshooting to come
-; still need to adjust to pass only the next move rather than best game state at nth depth
-(defun test_minimax (board player depth)
-	(setf result (get_max board player (- depth 1)))
 )
 
 ; Generate successive states from current state for a player
@@ -228,18 +203,6 @@ generating successors of a board state.
 			(t nil)
 		)
 	)
-)
-
-(defun testmakemove (board player ply)
-	(let* 
-		(
-			(node (minimax board player (1- ply)))
-			(path_length (list-length (node-path node)))
-		)
-		(setf board (nth (- path_length 2) (node-path node)))
-		(printBoard board)
-		board
-	) 
 )
 
 ; print board state
@@ -329,6 +292,7 @@ plyr - 'B or 'W representing the current player
 	)
 )
 
+<<<<<<< HEAD
 
 ; Board is going to be a node - see node definition
 (defun minimax (board player depth &optional (type 'max) (path '())
@@ -392,6 +356,8 @@ plyr - 'B or 'W representing the current player
 ; RETURNS:
 ; 
 ; (score board)
+=======
+>>>>>>> 72a9e9dc0c8e11e0ed6357136377f0af298deaa4
 (defun diet_minimax (board player depth &optional (type 'max) 
 				(alpha -1000000) (beta 1000000))
 	(let
@@ -399,7 +365,7 @@ plyr - 'B or 'W representing the current player
 			(moves (gen_successors board player))
 			(min_value 1000000)
 			(max_value -1000000)
-			(next (o_type type))
+			(next (switchPlayerType type))
 			(opp (opponent player))
 			(beststate nil)
 		)
@@ -487,6 +453,7 @@ plyr - 'B or 'W representing the current player
 
 
 
+<<<<<<< HEAD
 
 (setf testboard '(B W B B W B B B 
    				  B B W B W B B B
@@ -513,3 +480,5 @@ plyr - 'B or 'W representing the current player
 
 (setf second '(- - - - - - - - - - - - - - - - - - - - - - - - - - W W B - - - - - - B W - -
  - - - - - - - - - - - - - - - - - - - - - - - - -))
+=======
+>>>>>>> 72a9e9dc0c8e11e0ed6357136377f0af298deaa4
