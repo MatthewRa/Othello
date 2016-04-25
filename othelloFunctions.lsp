@@ -6,11 +6,16 @@
 Author: Steve Huerta, Matthew Rames
 Written Spring 2016 for CSC447/547 AI class.
 
+This file contains functions for an othello game. Such as player moves and computer AI moves.
+The AI uses mini-max with alpha beta pruning to determine the best moves based on a 4ply depth.
+This file also contains methods for scoring a board, fliping, placing pieces on a board, and 
+generating successors of a board state.
+
 |#
 
 ;--------------------------------------------------------------------------
 
-
+; Node structure for mini-max tree
 (defstruct node
 	state ; 8x8 representation of board
 	;player ; current player
@@ -35,8 +40,8 @@ Written Spring 2016 for CSC447/547 AI class.
 				(loop 
 					; Termination test
 					(when 	(or 
-								(null (member '- board)) 
-								(or (null (member 'W board)) (null (member 'B board)))
+								(null (member '- board)) ; Check if board has no empty spots left
+								(or (null (member 'W board)) (null (member 'B board))) ; Check if board has no B or W spots
 							)
 						(scoring_count board)
 						(return board)
@@ -49,8 +54,8 @@ Written Spring 2016 for CSC447/547 AI class.
 					
 					; Termination test
 					(when 	(or 
-								(null (member '- board)) 
-								(or (null (member 'W board)) (null (member 'B board)))
+								(null (member '- board)) ; Check if board has no empty spots left
+								(or (null (member 'W board)) (null (member 'B board))) ; Check if board has no B or W spots
 							)
 						(scoring_count board)
 						(return board)
@@ -67,8 +72,8 @@ Written Spring 2016 for CSC447/547 AI class.
 				(loop 
 					; Termination test
 					(when 	(or 
-								(null (member '- board)) 
-								(or (null (member 'W board)) (null (member 'B board)))
+								(null (member '- board)) ; Check if board has no empty spots left
+								(or (null (member 'W board)) (null (member 'B board))) ; Check if board has no B or W spots
 							)
 						(scoring_count board)
 						(return board)
@@ -81,8 +86,8 @@ Written Spring 2016 for CSC447/547 AI class.
 					
 					; Termination test
 					(when 	(or 
-								(null (member '- board)) 
-								(or (null (member 'W board)) (null (member 'B board)))
+								(null (member '- board)) ; Check if board has no empty spots left
+								(or (null (member 'W board)) (null (member 'B board))) ; Check if board has no B or W spots
 							)
 						(scoring_count board)
 						(return board)
@@ -145,6 +150,7 @@ Written Spring 2016 for CSC447/547 AI class.
 	board
 )
 
+; Empty Othello Init
 (defun othello-init ()
 
 )
