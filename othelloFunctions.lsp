@@ -140,7 +140,7 @@ generating successors of a board state.
 		)
 		; Player can make a move
 		((not (null (gen_successors board playerColor)))
-			(setf NewBoard (nth 1 (diet_minimax board playerColor ply)))
+			(setf NewBoard (nth 1 (minimax board playerColor ply)))
 			(setf move (find_move board NewBoard))
 			(format t "~%~s players moved at: ~d ~d~%" playerColor (nth 0 move) (nth 1 move))
 		)
@@ -375,7 +375,7 @@ generating successors of a board state.
 ; (score board) 
 ; score - the score of the maximizing player
 ; board - board state
-(defun diet_minimax (board player depth &optional (type 'max) 
+(defun minimax (board player depth &optional (type 'max) 
 				(alpha -1000000) (beta 1000000))
 	(let
 		( 
@@ -403,7 +403,7 @@ generating successors of a board state.
 				; iterate across the number of board successors
 				(dotimes (i (list-length moves))
 					; get the score and board from minimax
-					(setf child (diet_minimax (nth i moves) opp (1- depth) next alpha beta))
+					(setf child (minimax (nth i moves) opp (1- depth) next alpha beta))
 					; unpack the score from the returned list
 					(setf score (car child))
 					(cond 
