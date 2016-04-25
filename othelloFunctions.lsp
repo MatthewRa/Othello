@@ -15,16 +15,6 @@ generating successors of a board state.
 
 ;--------------------------------------------------------------------------
 
-; Node structure for mini-max tree
-(defstruct node
-	state ; 8x8 representation of board
-	;player ; current player
-	;black ; number of black pieces on board
-	;white ; number of white pieces on board
-	score ; the score of the player W or B
-	path ; list of lists to get to this state
-)
-
 ; This is the entry point of the othello game
 ; Depending on what the color the user chose either the computer or user will go first
 (defun StartGame(playerColor)
@@ -181,22 +171,6 @@ generating successors of a board state.
 	)
 )
 
-; Just to get some formatted board states
-(defun test_gen_succ (board player)
-	(let ((states (gen_successors board player)))
-		(dotimes (i (list-length states))
-			(printBoard (nth i states))
-		)
-	) 
-)
-
-; testing minimax, seems to have issues with depths greater than nine....
-; more troubleshooting to come
-; still need to adjust to pass only the next move rather than best game state at nth depth
-(defun test_minimax (board player depth)
-	(setf result (get_max board player (- depth 1)))
-)
-
 ; Generate successive states from current state for a player
 ; Returns NIL if no moves are available
 ; Returns a list of lists (board states)
@@ -228,18 +202,6 @@ generating successors of a board state.
 			(t nil)
 		)
 	)
-)
-
-(defun testmakemove (board player ply)
-	(let* 
-		(
-			(node (minimax board player (1- ply)))
-			(path_length (list-length (node-path node)))
-		)
-		(setf board (nth (- path_length 2) (node-path node)))
-		(printBoard board)
-		board
-	) 
 )
 
 ; print board state
@@ -326,50 +288,6 @@ plyr - 'B or 'W representing the current player
 					(setf (nth pos board) player))
 			)
 		))
-	)
-)
-
-
-; Board is going to be a node - see node definition
-(defun minimax (board player depth &optional (type 'max) (path '())
-				(alpha -1000000) (beta 1000000))
-	(let
-		( 
-			(moves (gen_successors board player))
-			(min_value 1000000)
-			(max_value -1000000)
-			(next (o_type type))
-			(opp (opponent player))
-			(path (cons board path))
-			(bestnode nil)
-		)
-		(cond 
-			((or (eq depth 0)(eq moves nil))
-				(setf node (make-node :state board :score (score_board board player type) :path path))
-			)
-			((not (null board))
-				;(format t "DEPTH: ~d PLAYER: ~s~%" depth player)
-				(dotimes (i (list-length moves))
-					(cond ((> beta alpha)
-						(setf node (minimax (nth i moves) opp (1- depth) next path alpha beta))
-						(cond 
-							((and (not (null node)) (eq type 'max) (< max_value (node-score node)))
-								(setf max_value (node-score node))
-								(cond ((< alpha max_value) (setf alpha max_value)))
-								(setf bestnode node)
-							)
-							((and (not (null node)) (eq type 'min) (> min_value (node-score node)))
-								(setf min_value (node-score node))
-								(cond ((> beta min_value) (setf beta min_value)))
-								(setf bestnode node)
-							)
-						))
-						;(t (format t "CUT PLAY: ~d DEPTH: ~d PLAYER: ~s TYPE: ~s~%" i depth player type))
-					)
-				)
-				bestnode 
-			)
-		)
 	)
 )
 
@@ -465,19 +383,6 @@ plyr - 'B or 'W representing the current player
 		)
 	)
 )
-
-
-
-
-(setf testboard '(B W B B W B B B 
-   				  B B W B W B B B
-				  W W B B B B B B
-				  W W W B B B W B
-				  W W B W B B W B 
-				  W B W B B B W W 
-				  W W B B B W B W 
-				  W W W W W B W - )
- )
 
 
 
