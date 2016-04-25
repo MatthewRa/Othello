@@ -52,7 +52,8 @@ generating successors of a board state.
 					)
 					
 					; Computer Makes Move
-					(setf board (make-move board 'W 4))
+					(setf newMove (make-move board 'W 4))
+					(setf board(player_move board newMove 'W))
 					
 					(printBoard board)
 				)
@@ -70,7 +71,8 @@ generating successors of a board state.
 					)
 					
 					; Computer B Makes Move
-					(setf board (make-move board 'B 4))
+					(setf newMove (make-move board 'B 4))
+					(setf board(player_move board newMove 'B))
 					
 					(printBoard board)
 					
@@ -133,11 +135,12 @@ generating successors of a board state.
 		)
 		; Player can make a move
 		((not (null (gen_successors board playerColor)))
-			(format t "~%~s players move...~%" playerColor)
-			(setf board (nth 1 (diet_minimax board playerColor ply)))
+			(setf NewBoard (nth 1 (diet_minimax board playerColor ply)))
+			(setf move (find_move board NewBoard))
+			(format t "~%~s players moved at: ~d ~d~%" playerColor (nth 0 move) (nth 1 move))
 		)
 	)
-	board
+	move
 )
 
 ; Empty Othello Init
@@ -292,51 +295,6 @@ plyr - 'B or 'W representing the current player
 	)
 )
 
-<<<<<<< HEAD
-
-; Board is going to be a node - see node definition
-(defun minimax (board player depth &optional (type 'max) (path '())
-				(alpha -1000000) (beta 1000000))
-	(let
-		( 
-			(moves (gen_successors board player))
-			(min_value 1000000)
-			(max_value -1000000)
-			(next (o_type type))
-			(opp (opponent player))
-			(path (cons board path))
-			(bestnode nil)
-		)
-		(cond 
-			((or (eq depth 0)(eq moves nil))
-				(setf node (make-node :state board :score (score_board board player type) :path path))
-			)
-			((not (null board))
-				;(format t "DEPTH: ~d PLAYER: ~s~%" depth player)
-				(dotimes (i (list-length moves))
-					(cond ((> beta alpha)
-						(setf node (minimax (nth i moves) opp (1- depth) next path alpha beta))
-						(cond 
-							((and (not (null node)) (eq type 'max) (< max_value (node-score node)))
-								(setf max_value (node-score node))
-								(cond ((< alpha max_value) (setf alpha max_value)))
-								(setf bestnode node)
-							)
-							((and (not (null node)) (eq type 'min) (> min_value (node-score node)))
-								(setf min_value (node-score node))
-								(cond ((> beta min_value) (setf beta min_value)))
-								(setf bestnode node)
-							)
-						))
-						;(t (format t "CUT PLAY: ~d DEPTH: ~d PLAYER: ~s TYPE: ~s~%" i depth player type))
-					)
-				)
-				bestnode 
-			)
-		)
-	)
-)
-
 ; This function will initialize a minimax with alpha beta 
 ; pruning algorithm. The player calling this function will 
 ; be the maximizing player. The function will recursively 
@@ -356,8 +314,6 @@ plyr - 'B or 'W representing the current player
 ; RETURNS:
 ; 
 ; (score board)
-=======
->>>>>>> 72a9e9dc0c8e11e0ed6357136377f0af298deaa4
 (defun diet_minimax (board player depth &optional (type 'max) 
 				(alpha -1000000) (beta 1000000))
 	(let
@@ -453,32 +409,12 @@ plyr - 'B or 'W representing the current player
 
 
 
-<<<<<<< HEAD
-
-(setf testboard '(B W B B W B B B 
-   				  B B W B W B B B
-				  W W B B B B B B
-				  W W W B B B W B
-				  W W B W B B W B 
-				  W B W B B B W W 
-				  W W B B B W B W 
-				  W W W W W B W - )
- )
-
-
-
 (defun find_move (board next_board)
 	(dotimes (i 64)
 		(cond 
 			((and (eq (nth i board) '-)(not (eq (nth i next_board) '-)))
-				(format t "POS: ~d~%" i)
 				(return (list (+ (floor(/ i 8)) 1) (+ (mod i 8) 1)))
 			)
 		)
 	)
 )
-
-(setf second '(- - - - - - - - - - - - - - - - - - - - - - - - - - W W B - - - - - - B W - -
- - - - - - - - - - - - - - - - - - - - - - - - - -))
-=======
->>>>>>> 72a9e9dc0c8e11e0ed6357136377f0af298deaa4
