@@ -373,6 +373,25 @@ plyr - 'B or 'W representing the current player
 	)
 )
 
+; This function will initialize a minimax with alpha beta 
+; pruning algorithm. The player calling this function will 
+; be the maximizing player. The function will recursively 
+; call itself until the desired n-ply depth is reached and 
+; the board state will be scored relative to the maximizing
+; player.
+;
+; PARAMETERS:
+;
+; board - state of the board
+; player - player 'B or 'W
+; depth - the current depth of the minimax play
+; type - minimizing or maximizing player ('max or 'min)
+; alpha - the best value for maximum play
+; beta - the best value for minimum play
+;
+; RETURNS:
+; 
+; (score board)
 (defun diet_minimax (board player depth &optional (type 'max) 
 				(alpha -1000000) (beta 1000000))
 	(let
@@ -481,3 +500,16 @@ plyr - 'B or 'W representing the current player
 
 
 
+(defun find_move (board next_board)
+	(dotimes (i 64)
+		(cond 
+			((and (eq (nth i board) '-)(not (eq (nth i next_board) '-)))
+				(format t "POS: ~d~%" i)
+				(return (list (+ (floor(/ i 8)) 1) (+ (mod i 8) 1)))
+			)
+		)
+	)
+)
+
+(setf second '(- - - - - - - - - - - - - - - - - - - - - - - - - - W W B - - - - - - B W - -
+ - - - - - - - - - - - - - - - - - - - - - - - - -))
