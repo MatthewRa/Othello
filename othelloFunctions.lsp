@@ -153,7 +153,8 @@ generating successors of a board state.
 	)
 )
 
-(defun o_type (type)
+; This function switchs player type from max to min and vice versa
+(defun switchPlayerType (type)
 	(let ((other_type 'min))
 		(cond ((eq type 'min) (setf other_type 'max)))
 		other_type
@@ -298,7 +299,7 @@ plyr - 'B or 'W representing the current player
 			(moves (gen_successors board player))
 			(min_value 1000000)
 			(max_value -1000000)
-			(next (o_type type))
+			(next (switchPlayerType type))
 			(opp (opponent player))
 			(beststate nil)
 		)
