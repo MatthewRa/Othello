@@ -265,10 +265,10 @@ generating successors of a board state.
 			(newboard board)
 			; name our opponent
 			(opp (opponent plyr))
-			; ; get our row position  DO WE NEED THIS ???????
-			; (pos_row (- (car pos) 1)) ; DO WE NEED THIS 
-			; ; get our col position DO WE NEED THIS 
-			; (pos_col (- (cadr pos) 1)) ; DO WE NEED THIS 
+			; get our row position  
+			(pos_row (- (car pos) 1)) 
+			; get our col position 
+			(pos_col (- (cadr pos) 1)) 
 
 			; calculate the position of play in the 1D list
 			(position (+ (- (cadr pos) 1) (* (- (car pos) 1) 8)) )
@@ -477,7 +477,7 @@ generating successors of a board state.
 		; Output scores
 		(format t "player b score: ~d~%" black)
 		(format t "player w score: ~d~%" white)
-		; (list black white)   DO WE NEED THIS????????????????????????
+		(list black white)  
 	)
 )
 
