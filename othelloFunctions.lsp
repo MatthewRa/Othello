@@ -53,7 +53,10 @@ generating successors of a board state.
 					
 					; Computer Makes Move
 					(setf newMove (make-move board 'W 4))
-					(setf board(player_move board newMove 'W))
+					(when (not (null newMove))
+						(setf board(player_move board newMove 'W))
+					)
+					
 					
 					(printBoard board)
 				)
@@ -72,7 +75,9 @@ generating successors of a board state.
 					
 					; Computer B Makes Move
 					(setf newMove (make-move board 'B 4))
-					(setf board(player_move board newMove 'B))
+					(when (not (null newMove))
+						(setf board(player_move board newMove 'B))
+					)
 					
 					(printBoard board)
 					

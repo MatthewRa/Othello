@@ -50,7 +50,6 @@ Inside CLISP
 	(cond
 		; Othello was started in clisp repl as (othello "Black/White")
 		((null (listp args))
-			(print args)
 			(setf playerColor args)
 		)
 		
