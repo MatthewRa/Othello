@@ -102,6 +102,6 @@ Inside CLISP
 )
 
 ; call othello if parameters were passed in
-(when (= (length *ARGS*) 1)
-	(othello *ARGS*)
-)
+; (when (= (length *ARGS*) 1)
+	; (othello *ARGS*)
+; )

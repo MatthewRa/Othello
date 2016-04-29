@@ -53,7 +53,7 @@ generating successors of a board state.
 					
 					; Computer Makes Move
 					(setf newMove (make-move board 'W 4))
-					(when (not (null newMove))
+					(when (not (eq newMove '()))
 						(setf board(player_move board newMove 'W))
 					)
 					
@@ -75,7 +75,7 @@ generating successors of a board state.
 					
 					; Computer B Makes Move
 					(setf newMove (make-move board 'B 4))
-					(when (not (null newMove))
+					(when (not (eq newMove '()))
 						(setf board(player_move board newMove 'B))
 					)
 					
@@ -132,11 +132,12 @@ generating successors of a board state.
 )
 
 ; Function called for an AI's turn
-(defun make-move (board playerColor ply)	
+(defun make-move (board playerColor ply)
 	(cond 
 		; Player has no moves
 		((null (gen_successors board playerColor))
-			(format t "~%Player ~s has no moves...~%" playerColor)
+			;(format t "~%Player ~s has no moves...~%" playerColor)
+			(setf move '())
 		)
 		; Player can make a move
 		((not (null (gen_successors board playerColor)))
@@ -145,6 +146,7 @@ generating successors of a board state.
 			(format t "~%~s players moved at: ~d ~d~%" playerColor (nth 0 move) (nth 1 move))
 		)
 	)
+	(print move)
 	move
 )
 
